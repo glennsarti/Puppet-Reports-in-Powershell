@@ -4,14 +4,28 @@ $ErrorActionPreference = "Stop"
 $DebugPreference = "SilentlyContinue"
 $VerbosePreference = "SilentlyContinue"
 
-
 Get-Module | Where-Object { $_.Name -eq 'PowerYaml' } | Remove-Module
 Import-Module "$PSScriptRoot\poweryaml\PowerYaml.psm1"
-$yamlfile = 'Z:\Projects\puppet-reports-in-powershell\examples\201405200656.yaml'
+
+$yamlFile = "$PSScriptRoot\examples\201405200656.yaml"
+$transformFile = "$PSScriptRoot\transforms\html.basicreport.xsl"
 
 $objYaml = Get-Yaml -FromFile $yamlfile
 
 $xmlDoc = [xml]"<report />"
+
+function Transform-XML($xmlDocument, $transformFilename) {
+	$xmlContentReader = ([System.Xml.XmlReader]::Create( (New-Object System.IO.StringReader($xmlDocument.innerXML))))
+
+	$StyleSheet = New-Object System.Xml.Xsl.XslCompiledTransform
+	$StyleSheet.Load($transformFile)
+
+	$stringWriter = New-Object System.IO.StringWriter
+	$XmlWriter = New-Object System.XMl.XmlTextWriter $StringWriter 
+		
+	$StyleSheet.Transform( [System.Xml.XmlReader]$xmlContentReader, [System.Xml.XmlWriter]$XmlWriter)
+	Write-Output $stringWriter.ToString()
+}
 
 function Write-ResourceStatusSummary($objYaml, $xmlDoc) {
   $statuses = @{}
@@ -84,5 +98,11 @@ Write-ResourceStatusSummary $objYaml $xmlDoc
 Write-ResourceStatus $objYaml $xmlDoc
 
 #$xmlDoc.innerXml
-$xmlDoc.innerXml | Out-File C:\temp\Test.XML
+#$xmlDoc.innerXml | Out-File $outputFile
+
+Transform-XML -XMLDocument $xmlDoc -transformFilename $transformFile | Out-File "$PSScriptRoot\downloads\test.html"
+
+
+
+
 
