@@ -1,5 +1,9 @@
 param()
 
+# References
+# Report v3/4 Reference for Puppet 2.7.x and 3.x
+# http://docs.puppetlabs.com/puppet/3/reference/format_report.html
+
 $ErrorActionPreference = "Stop"
 $DebugPreference = "SilentlyContinue"
 $VerbosePreference = "SilentlyContinue"
@@ -28,6 +32,15 @@ function Transform-XML($xmlDocument, $transformFilename) {
 }
 
 function Write-ResourceStatusSummary($objYaml, $xmlDoc) {
+  $reportInfoNode = $xmlDoc.createElement('reportinformation')  
+  $node = $xmlDoc.createElement('host'); $node.innerText = $objYaml.host; [void]($reportInfoNode.appendChild($node))
+  $node = $xmlDoc.createElement('time'); $node.innerText = $objYaml.time; [void]($reportInfoNode.appendChild($node))
+  $node = $xmlDoc.createElement('reportformat'); $node.innerText = $objYaml.report_format; [void]($reportInfoNode.appendChild($node))
+  $node = $xmlDoc.createElement('puppetversion'); $node.innerText = $objYaml.puppet_version; [void]($reportInfoNode.appendChild($node))
+  $node = $xmlDoc.createElement('status'); $node.innerText = $objYaml.status; [void]($reportInfoNode.appendChild($node))
+  $node = $xmlDoc.createElement('environment'); $node.innerText = $objYaml.environment; [void]($reportInfoNode.appendChild($node))
+  [void]($xmlDoc.DocumentElement.appendChild($reportInfoNode))
+
   $statuses = @{}
   $resourceMetrics = $objYaml.metrics['resources'].values
   $noChange = 0
@@ -59,6 +72,7 @@ function Write-ResourceStatusSummary($objYaml, $xmlDoc) {
     { $node.SetAttribute('percent',0) }
 
     [void]($summaryNode.AppendChild($node))
+    
   }
   [void]($xmlDoc.DocumentElement.AppendChild($summaryNode))
 }
@@ -97,8 +111,9 @@ function Write-ResourceStatus($objYaml, $xmlDoc) {
 Write-ResourceStatusSummary $objYaml $xmlDoc
 Write-ResourceStatus $objYaml $xmlDoc
 
-#$xmlDoc.innerXml
-#$xmlDoc.innerXml | Out-File $outputFile
+
+##$xmlDoc.innerXml
+$xmlDoc.innerXml | Out-File "$PSScriptRoot\downloads\test.xml"
 
 Transform-XML -XMLDocument $xmlDoc -transformFilename $transformFile | Out-File "$PSScriptRoot\downloads\test.html"
 
