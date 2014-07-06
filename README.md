@@ -16,10 +16,16 @@ This project aims to make converting the Puppet reports into different formats o
 Getting Started
 ---------------
 ### Download or install the dependencies
-_To Do_
-* Install PowerYaml via Git
-* Install PowerYaml via Nuget
-* Install PowerYaml via Chocolately
+
+* Install PowerYaml via GitHub (git must be in the search path)
+
+Execute `dependencies\InstallPowerYamlGithub.cmd`
+
+* Install PowerYaml via Nuget (nuget must be in the search path)
+
+Execute `dependencies\InstallPowerYamlNuget.cmd`
+
+* _To Do_ Install PowerYaml via Chocolately
 
 Example Transform files
 ------------------------
