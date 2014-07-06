@@ -25,8 +25,6 @@ Execute `dependencies\InstallPowerYamlGithub.cmd`
 
 Execute `dependencies\InstallPowerYamlNuget.cmd`
 
-* _To Do_ Install PowerYaml via Chocolately
-
 Example Transform files
 ------------------------
 The transform files are XML Stylesheets which contain XML transformation functions.  They are located in the `transforms` directory.
