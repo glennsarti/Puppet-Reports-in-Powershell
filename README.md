@@ -81,7 +81,7 @@ How does it work?
 4. Save the transformed reports to the output directory, and optionally save the original XML documents as well
 
 ### Why convert Yaml to XML?
-_To Do_
+XML is easy to manipulate using XSL transforms and is searchable using XPath.  Also Windows natively supports XML document manipulation.
 
 
 Dependencies
