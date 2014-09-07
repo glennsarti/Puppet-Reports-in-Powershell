@@ -19,11 +19,7 @@ Getting Started
 
 * Install PowerYaml via GitHub (git must be in the search path)
 
-Execute `dependencies\InstallPowerYamlGithub.cmd`
-
-* Install PowerYaml via Nuget (nuget must be in the search path)
-
-Execute `dependencies\InstallPowerYamlNuget.cmd`
+Execute `src\InstallPowerYamlGithub.cmd`
 
 Example Transform files
 ------------------------
@@ -90,6 +86,6 @@ This project uses the PowerYaml and Yaml.Net libraries
 
 [PowerYaml on Github](https://github.com/scottmuc/PowerYaml)
 
-[PowerYaml on Nuget](https://www.nuget.org/packages/PowerYaml/)
+Warning - The [PowerYaml Nuget package](https://www.nuget.org/packages/PowerYaml/) is out of date and will throw errors in PowerShell v3.0+
 
 [YamlDotNet on GitHub](https://github.com/aaubry/YamlDotNet)
