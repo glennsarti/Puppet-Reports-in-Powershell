@@ -12,9 +12,14 @@ function Get-ScriptDirectory
 [void] (Get-ScriptDirectory)
 
 #Load Required Assemblies
+Write-Verbose 'Loading WPF assemblies'
 Add-Type –assemblyName PresentationFramework
 Add-Type –assemblyName PresentationCore
 Add-Type –assemblyName WindowsBase
+Write-Verbose 'Loading the PowerYaml module'
+Import-Module "$PSScriptRoot\..\poweryaml\PowerYaml.psm1"
+Write-Verbose 'Loading the PuppetReportParser module'
+Import-Module "$PSScriptRoot\..\PuppetReportParser.psm1"
 
 # Load other PS1 files
 Get-ChildItem -Path $global:ScriptDirectory | Where-Object { ($_.Name -imatch '\.ps1$') -and ($_.Name -ne 'reportgui.ps1') } | % {
