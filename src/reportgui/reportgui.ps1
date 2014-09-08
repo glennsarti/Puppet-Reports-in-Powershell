@@ -61,34 +61,46 @@ Write-Verbose "Adding XAML event handlers..."
 
   # Populate the list box
   Write-Verbose 'Populating the report list...'
-  (Get-WPFControl 'listReports').Items.Clear()  
-	Get-Item -Path 'PuppetReports:\*.yaml' | Sort-Object ($_.Name) | % {
-    [void](Get-WPFControl 'listReports').Items.Add($_.Name)
+  [xml]$xmlDoc = '<reports xmlns=""></reports>'
+ 	Get-Item -Path 'PuppetReports:\*.yaml' | Sort-Object ($_.LastWriteTime) -Descending | % {
+ 	  $xmlNode = $xmlDoc.CreateElement('report')
+ 	  $xmlNode.SetAttribute('name',$_.name.ToString())
+ 	  $xmlNode.SetAttribute('datemodified',($_.LastWriteTime.ToString('dd MMM yyyy HH:mm:ss')))
+ 	  $xmlNode.innerText = ($_.FullName)
+ 	  $xmlDoc.reports.AppendChild($xmlNode)
   }
-  
+  # Write the xml document to the XAML for databinding
+  (Get-WPFControl 'xmlReportList').Document = $xmlDoc
+
   Write-Verbose 'Expanding the report list'
   # Expand the Reports List
   (Get-WPFControl 'expandReportList').IsExpanded = $true   
   # Contract the Report Location
   (Get-WPFControl 'expandReportLocation').IsExpanded = $false
 })
-(Get-WPFControl 'listReports').Add_SelectionChanged({
-  # Get the report name
-  $index = (Get-WPFControl 'listReports').selectedIndex
-  if ($index -eq -1)
-  {
-    # Clear the web browser
+(Get-WPFControl 'listReports').Add_MouseDoubleClick({
+  param($sender,$e)
+
+  # Parse the control tree looking for the descendant ListViewItem
+	$originalSource = [System.Windows.DependencyObject]$e.OriginalSource;
+  while ( ($originalSource -ne $null) -and ($originalSource.GetType().ToString() -ne 'System.Windows.Controls.ListViewItem') )  {
+  	$originalSource = [System.Windows.Media.VisualTreeHelper]::GetParent($originalSource)
   }
-  else
-  {
-    $reportName =  Join-Path -Path 'PuppetReports:' -ChildPath (Get-WPFControl 'listReports').Items[$index]
-  }
+  if ($originalSource -eq $null) { return; }
+  
+  # Get the data context (XMLElement)
+  $dc = $originalSource.DataContext
+  $reportName = ($dc."#text")
+	
   # Get the template name
   $index = (Get-WPFControl 'comboReportList').selectedIndex
-  if ($index -eq -1) { return; } # No transform has been selected
+  if ($index -eq -1) {  # No transform has been selected
+    [void] ([System.Windows.MessageBox]::Show('Please select a Report Type to use','Error','Ok','Information'))
+    return;
+  }
   $transformName = (Get-WPFControl 'comboReportList').Items[$index]
   Write-Verbose "Parsing report $($reportName) with transform $($transformName)..."
-
+  # TODO Actually do the conversion
 })
 
 # Populate XAML items

@@ -2,6 +2,16 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Puppet Report Viewer" Height="471" Width="612">
+    <Window.Resources>
+    <!--   XML Data Source   -->
+    <XmlDataProvider x:Key="ReportList" XPath="reports" x:Name="xmlReportList">
+      <x:XData>
+        <reports xmlns="">
+        </reports>
+      </x:XData>
+      <!-- <report name="report1" datemodified="dd mmm yyyy HH:mm:ss">C:\Report1.xml</report> -->
+    </XmlDataProvider>
+  </Window.Resources>
   <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" MinWidth="50"/>
@@ -9,8 +19,8 @@
       <ColumnDefinition Width="*" MinWidth="50"/>
     </Grid.ColumnDefinitions>
     <DockPanel Grid.Column="0" >
-      <Expander x:Name="expandReportLocation" Header="Report Location" IsExpanded="True" Margin="5" Padding="2" DockPanel.Dock="Top" >
-          <StackPanel>
+      <Expander x:Name="expandReportLocation" Header="Report Location" IsExpanded="True" Margin="5" Padding="2" DockPanel.Dock="Top">
+        <StackPanel>
           <Grid>
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="100"/>
@@ -27,10 +37,10 @@
             <Label Content="Username" Grid.Column="0" Grid.Row="1" Margin="5"/>
             <TextBox Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" Margin="5" x:Name="textUsername"/>
             <Label Content="Reports Path" Grid.Column="0" Grid.Row="2" Margin="5"/>
-            <TextBox Grid.Column="1" Grid.Row="2" Text="C:\ProgramData\PuppetLabs\puppet\var\reports" VerticalContentAlignment="Center" Margin="5" x:Name="textReportLocation" />
-        </Grid>
-        <Button Content="Connect ..." Margin="5" Width="100" HorizontalAlignment="Right" x:Name="buttonConnect"  />
-      </StackPanel>
+            <TextBox Grid.Column="1" Grid.Row="2" Text="C:\ProgramData \PuppetLabs\puppet\var\reports" VerticalContentAlignment="Center" Margin="5" x:Name="textReportLocation" />
+          </Grid>
+          <Button Content="Connect ..." Margin="5" Width="100" HorizontalAlignment="Right" x:Name="buttonConnect" />
+        </StackPanel>
       </Expander>
       <Expander Header="Report Type" IsExpanded="True" Margin="5" Padding="2" DockPanel.Dock="Top">
         <StackPanel >
@@ -39,11 +49,20 @@
         </StackPanel>
       </Expander>
       <Expander Header="Reports" IsExpanded="False" Margin="5" Padding="2" x:Name="expandReportList">
-        <ListBox x:Name="listReports" Margin="2" />
+        <ListView x:Name="listReports" Margin="2"
+          DataContext="{DynamicResource ReportList}"
+          ItemsSource="{Binding XPath=/reports/report}"
+          ToolTip="Double click a report to view the report in the selected type">
+          <ListView.View>
+            <GridView>
+              <GridViewColumn Header="Report Name" DisplayMemberBinding="{Binding XPath=@name}" />
+              <GridViewColumn Header="Date Modified" DisplayMemberBinding="{Binding XPath=@datemodified}" />
+            </GridView>
+          </ListView.View>
+        </ListView>
       </Expander>
     </DockPanel>
     <GridSplitter Grid.Column="1" HorizontalAlignment="Right" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Width="5" Background="#FFBCBCBC" Height="Auto" VerticalAlignment="Stretch" Margin="0" />
     <WebBrowser x:Name="reportBrowser" Grid.Column="2" />
- 
   </Grid>
 </Window>
