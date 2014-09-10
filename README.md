@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/prq49m7g2dggxgxj)](https://ci.appveyor.com/project/glennsarti/puppet-reports-in-powershell)
+
 Puppet-Reports-in-Powershell
 ============================
 
