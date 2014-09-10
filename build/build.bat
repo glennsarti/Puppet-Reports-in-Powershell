@@ -27,8 +27,8 @@ XCOPY "%SRC%" "%TOOLS%" /s /e /v /c /i /f /y
 ECHO Removing extra files...
 DEL "%WORKING%\Tools\InstallPowerYamlGithub.cmd"
 
-SET PKGVERSION=%1
-IF NOT [%PKGVERSION%] == [] SET PKGVERSION=-Version "%PKGVERSION%"
+SET PKGVERSION=%APPVEYOR_BUILD_VERSION%
+IF NOT [%PKGVERSION%] == [] SET PKGVERSION=-Version "0.9.%PKGVERSION%"
 
 ECHO Run Nuget Pack
 "nuget.exe" pack  "%~dp0Package.nuspec" -OutputDirectory "%THISDIR%" -BasePath "%WORKING%" -NonInteractive %PKGVERSION%
