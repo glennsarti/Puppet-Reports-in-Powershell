@@ -11,6 +11,8 @@ function Get-ScriptDirectory
 }
 [void] (Get-ScriptDirectory)
 
+$transformPath = (Join-Path -Path $global:ScriptDirectory -ChildPath '..\transforms')
+
 #Load Required Assemblies
 Write-Verbose 'Loading WPF assemblies'
 Add-Type –assemblyName PresentationFramework
@@ -35,20 +37,6 @@ Write-Verbose "Loading the window XAML..."
 Write-Verbose "Parsing the window XAML..."
 $reader = (New-Object System.Xml.XmlNodeReader $xaml)
 $Global:wpfWindow = [Windows.Markup.XamlReader]::Load($reader)
-
-function Get-WPFControl {
-  [cmdletBinding(SupportsShouldProcess=$false,ConfirmImpact='Low')]
-  param(
-    [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
-    [string]$ControlName
-
-    ,[Parameter(Mandatory=$false,ValueFromPipeline=$false)]
-    [System.Windows.Window]$Window = $Global:wpfWindow
-  )  
-  Process {
-    Write-Output $Window.FindName($ControlName)
-  }
-}
 
 # Wire up the XAML
 Write-Verbose "Adding XAML event handlers..."
@@ -99,14 +87,23 @@ Write-Verbose "Adding XAML event handlers..."
     return;
   }
   $transformName = (Get-WPFControl 'comboReportList').Items[$index]
+  
+  # Actually do the conversion
   Write-Verbose "Parsing report $($reportName) with transform $($transformName)..."
-  # TODO Actually do the conversion
+  Invoke-ConvertReport -YAMLFilename $reportName -TransformFilename $transformName -TransformParentPath $transformPath
+  Write-Verbose "Conversion finished..."
 })
 
 # Populate XAML items
 Write-Verbose "Populating XAML controls..."
-Get-ChildItem -Path (Join-Path -Path $global:ScriptDirectory -ChildPath '..\transforms') | % {
-  [void]( (Get-WPFControl 'comboReportList').Items.Add($_.Name) )
+Get-ChildItem -Path $transformPath | % {
+  $transfromName = ($_.Name) -replace '.xsl',''
+  [void]( (Get-WPFControl 'comboReportList').Items.Add($transfromName) )
+}
+$readMe = $global:ScriptDirectory + '\reportgui.readme.html'
+if (Test-Path -Path $readMe) {
+  Write-Verbose "Displaying ReadMe..."
+  (Get-WPFControl 'reportBrowser').NavigateToString( ([IO.File]::ReadAllText($readMe) ) )
 }
 
 # Show the GUI
