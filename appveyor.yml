@@ -18,7 +18,7 @@ os: Windows Server 2012 R2
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - %APPVEYOR_BUILD_FOLDER%\\build\\build.bat %APPVEYOR_BUILD_VERSION%
+  - \%APPVEYOR_BUILD_FOLDER\%\\build\\build.bat \%APPVEYOR_BUILD_VERSION\%
 
  #artifacts:
  # - path: '*.nupkg'
