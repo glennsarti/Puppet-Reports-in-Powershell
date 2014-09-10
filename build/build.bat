@@ -29,6 +29,7 @@ DEL "%WORKING%\Tools\InstallPowerYamlGithub.cmd"
 
 SET PKGVERSION=%APPVEYOR_BUILD_VERSION%
 IF NOT [%PKGVERSION%] == [] SET PKGVERSION=-Version "0.9.%PKGVERSION%"
+ECHO Using package version %PKGVERSION%
 
 ECHO Run Nuget Pack
 "nuget.exe" pack  "%~dp0Package.nuspec" -OutputDirectory "%THISDIR%" -BasePath "%WORKING%" -NonInteractive %PKGVERSION%
