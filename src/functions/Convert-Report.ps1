@@ -16,6 +16,9 @@ function Convert-Report {
     ,[Parameter(Mandatory=$false,ValueFromPipeline=$false)]
     [switch]$OutputXML = $false
 
+    ,[Parameter(Mandatory=$false,ValueFromPipeline=$false)]
+    [switch]$TeeToWriteHost = $false
+
   )
   
   Begin {
@@ -28,7 +31,7 @@ function Convert-Report {
     if ($TransformDir -eq '') { $TransformDir = "$PSScriptRoot\..\transforms" }
     if ($Transform -eq '') { Throw 'No transform was specified'; return; }
     $Transform | % {
-      if (!(Test-Path "$TransformDir\$($_).xsl")) { Throw ('Transform file ' + $_ + ' does not exist'); return; }
+      if (!(Test-Path "$TransformDir\$($_).xsl")) { Throw ('Transform file ' + $_ + '.xsl does not exist'); return; }
     }
     if ($OutputDir -ne '') {
       if (!(Test-Path $OutputDir)) { Throw ('Output directory of ' + $OutputDir + ' does not exist'); return; }
@@ -63,16 +66,15 @@ function Convert-Report {
 
     $Transform | % {
       $transformFile = "$TransformDir\$($_).xsl"
+      $filename = Join-Path -Path $OutputDir -ChildPath ( (Get-ChildItem $yamlFile).BaseName + '.' + $_)
+      Write-Verbose "Applying transform $transformFile , output to $filename ..."
+      [void] (Transform-XML -XMLDocument $xmlDoc -transformFilename $transformFile | Out-File $filename -Force -Confirm:$false )
       
-      if ($Report.ToLower().EndsWith('.stdout')) {
-        Write-Verbose "Applying transform $transformFile , output to STDOUT..."
-        Transform-XML -XMLDocument $xmlDoc -transformFilename $transformFile
-      } else {
-        $filename = Join-Path -Path $OutputDir -ChildPath ( (Get-ChildItem $yamlFile).BaseName + '.' + $_)
-        Write-Verbose "Applying transform $transformFile , output to $filename ..."
-        Transform-XML -XMLDocument $xmlDoc -transformFilename $transformFile | Out-File $filename -Force -Confirm:$false 
-        Write-Output $filename
-      }    
+      if ($TeeToWriteHost) {
+        # TODO Write out the file content to Write-Host.  Useful if the caller is trapping Stdout
+      }
+
+      Write-Output $filename
     }
   }
   
