@@ -4,3 +4,6 @@ Desktop.INI
 downloads/*
 src/poweryaml/*
 examples/*
+build/working/*
+build/*.nupkg
+**/nuget.exe

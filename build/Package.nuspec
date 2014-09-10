@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <metadata>
+    <id>poshpuppetreports</id>
+    <version>0.0.0.1</version>
+    <title>Posh Puppet Reports</title>
+    <authors>Glenn Sarti</authors>
+    <owners>Glenn Sarti</owners>
+    <projectUrl>https://github.com/glennsarti/Puppet-Reports-in-Powershell</projectUrl>
+    <!-- <iconUrl></iconUrl> -->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Powershell scripts to convert Puppet YAML reports into different formats (HTML, TeamCity events), and includes a GUI to convert reports on the fly</description>
+    <tags>posh powershell puppet</tags>
+    <dependencies />
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
