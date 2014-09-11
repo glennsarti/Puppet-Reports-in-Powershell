@@ -20,11 +20,14 @@ os: Windows Server 2012 R2
 build_script:
   - "build\\build.bat"
 
- #artifacts:
- # - path: '*.nupkg'
+ artifacts:
+  - path: '*.nupkg'
   
 # to disable automatic tests
 test: off
 
 # to disable deployment
-deploy: off
+deploy:
+  # Deploying to a named environment
+  - provider: Environment
+    name: PRODMyGet
