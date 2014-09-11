@@ -1,3 +1,6 @@
+Latest [![Build status](https://ci.appveyor.com/api/projects/status/prq49m7g2dggxgxj)](https://ci.appveyor.com/project/glennsarti/puppet-reports-in-powershell)
+Master [![Build status](https://ci.appveyor.com/api/projects/status/prq49m7g2dggxgxj/branch/master)](https://ci.appveyor.com/project/glennsarti/puppet-reports-in-powershell/branch/master)
+
 Puppet-Reports-in-Powershell
 ============================
 
