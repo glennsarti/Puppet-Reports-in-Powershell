@@ -21,13 +21,12 @@ build_script:
   - "build\\build.bat"
 
  artifacts:
-  - path: "*.nupkg"
+  - path: *.nupkg
   
 # to disable automatic tests
 test: off
 
-# to disable deployment
-deploy:
-  # Deploying to a named environment
-  - provider: Environment
-    name: PRODMyGet
+#deploy:
+#  # Deploying to a named environment
+#  - provider: Environment
+#    name: PRODMyGet
