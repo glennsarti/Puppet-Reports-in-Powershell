@@ -3,7 +3,7 @@
 #---------------------------------#
 
 # version format
-version: "{build}"
+version: "0.9.{build}"
 
 #---------------------------------#
 #    environment configuration    #
@@ -18,10 +18,10 @@ os: Windows Server 2012 R2
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - "build\\build.bat"
+  - cmd: "build\\build.bat"
 
-# artifacts:
-#  - path: *.nupkg
+artifacts:
+  - path: test.nupkg
   
 # to disable automatic tests
 test: off
