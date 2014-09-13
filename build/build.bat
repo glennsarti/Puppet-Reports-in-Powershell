@@ -39,7 +39,7 @@ COPY "%THISDIR%\Package.nuspec" "%WORKING%\Package.nuspec"
 ECHO Getting the package version from various sources
 SET PKGVERSION=0.0.1
 IF NOT [%1] == [] SET PKGVERSION=%1
-IF NOT [%APPVEYOR_BUILD_VERSION%] == [] SET PKGVERSION=0.9.%APPVEYOR_BUILD_VERSION%
+IF NOT [%APPVEYOR_BUILD_VERSION%] == [] SET PKGVERSION=%APPVEYOR_BUILD_VERSION%
 ECHO Using package version %PKGVERSION%
 
 ECHO Munging files with version numbers
