@@ -21,7 +21,7 @@ build_script:
   - cmd: "build\\build.bat"
 
 artifacts:
-  - path: build\\*.nupkg
+  - path: **/*.nupkg
   
 # to disable automatic tests
 test: off
