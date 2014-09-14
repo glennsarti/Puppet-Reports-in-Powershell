@@ -13,7 +13,7 @@ Function Invoke-ConvertReport() {
   Process {
     $outputDir = ($Env:Temp)
     
-    $resultContent = (Convert-Report -Report $YAMLFilename -Transform $TransformFilename -TransformDir $TransformParentPath -OutputDir $outputDir -Verbose:($VerbosePreference -eq 'Continue'))
+    $resultContent = (ConvertFrom-PuppetReport -Report $YAMLFilename -Transform $TransformFilename -TransformDir $TransformParentPath -OutputDir $outputDir -Verbose:($VerbosePreference -eq 'Continue'))
     $fileContent = [IO.File]::ReadAllText($resultContent)
 
     if ($TransformFilename.EndsWith('.stdout')) {

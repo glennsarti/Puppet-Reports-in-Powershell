@@ -2,8 +2,12 @@ Thumbs.db
 Desktop.INI
 
 downloads/*
-src/poweryaml/*
 examples/*
+
+src/poweryaml/*
 build/working/*
 build/*.nupkg
 **/nuget.exe
+
+*.TempPoint.*
+

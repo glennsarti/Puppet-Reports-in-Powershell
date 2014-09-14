@@ -44,7 +44,7 @@ Copyright = ''
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @('PowerYaml')
+# RequiredModules = @()
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -59,10 +59,10 @@ RequiredModules = @('PowerYaml')
 # FormatsToProcess = @()
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-NestedModules = @('POSHPuppetReports.psm1')
+NestedModules = @('POSHPuppetReports.psm1','PowerYaml\PowerYaml.psm1')
 
 # Functions to export from this module
-FunctionsToExport = 'Convert-Report'
+FunctionsToExport = @('ConvertFrom-PuppetReport','Get-Yaml')
 
 # Cmdlets to export from this module
 CmdletsToExport = ''

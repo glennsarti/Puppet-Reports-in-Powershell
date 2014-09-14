@@ -18,8 +18,6 @@ Write-Verbose 'Loading WPF assemblies'
 Add-Type –assemblyName PresentationFramework
 Add-Type –assemblyName PresentationCore
 Add-Type –assemblyName WindowsBase
-Write-Verbose 'Loading the PowerYaml module'
-Import-Module "$PSScriptRoot\..\poweryaml\PowerYaml.psm1"
 Write-Verbose 'Loading the POSHPuppetReports module'
 Import-Module "$PSScriptRoot\..\POSHPuppetReports.psd1"
 

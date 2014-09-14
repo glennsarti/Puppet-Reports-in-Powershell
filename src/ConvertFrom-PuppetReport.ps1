@@ -1,4 +1,4 @@
-function Convert-Report {
+function ConvertFrom-PuppetReport {
   [cmdletBinding(SupportsShouldProcess=$false,ConfirmImpact='Low')]
   param(
     [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
@@ -46,35 +46,43 @@ function Convert-Report {
     # Process the report and transforms...
     $yamlFile = $Report
 
-    Write-Verbose "Reading $yamlFile ..."
-    $objYaml = Get-Yaml -FromFile $yamlFile
-
-    $xmlDoc = [xml]"<report />"
-    Write-Verbose "Creating Resource Status Summary XML..."
-    Write-ResourceStatusSummary $objYaml $xmlDoc
-    
-    # TODO: Write out the Metric.Time table to determine the total time
-    
-    Write-Verbose "Creating Resource Status XML..."
-    Write-ResourceStatus $objYaml $xmlDoc
-
-    if ($OutputXML) {    
-      $filename = Join-Path -Path $OutputDir -ChildPath ( (Get-ChildItem $yamlFile).BaseName + '.xml')
-      Write-Verbose "Writing XML to $filename ..."
-      $xmlDoc.innerXml | Out-File $filename -Encoding ASCII -Force -Confirm:$false
-    }
-
-    $Transform | % {
-      $transformFile = "$TransformDir\$($_).xsl"
-      $filename = Join-Path -Path $OutputDir -ChildPath ( (Get-ChildItem $yamlFile).BaseName + '.' + $_)
-      Write-Verbose "Applying transform $transformFile , output to $filename ..."
-      [void] (Transform-XML -XMLDocument $xmlDoc -transformFilename $transformFile | Out-File $filename -Force -Confirm:$false )
+    try {
+      Write-Verbose "Reading $yamlFile ..."
+      $objYaml = Get-Yaml -FromFile $yamlFile -ErrorAction Stop
+  
+      $xmlDoc = [xml]"<report />"
+      Write-Verbose "Creating Resource Status Summary XML..."
+      Write-ResourceStatusSummary $objYaml $xmlDoc
       
-      if ($TeeToWriteHost) {
-        # TODO Write out the file content to Write-Host.  Useful if the caller is trapping Stdout
+      # TODO: Write out the Metric.Time table to determine the total time
+      
+      Write-Verbose "Creating Resource Status XML..."
+      Write-ResourceStatus $objYaml $xmlDoc
+  
+      if ($OutputXML) {    
+        $filename = Join-Path -Path $OutputDir -ChildPath ( (Get-ChildItem $yamlFile).BaseName + '.xml')
+        Write-Verbose "Writing XML to $filename ..."
+        $xmlDoc.innerXml | Out-File $filename -Encoding ASCII -Force -Confirm:$false
       }
-
-      Write-Output $filename
+  
+      $Transform | % {
+        $transformFile = "$TransformDir\$($_).xsl"
+        $filename = Join-Path -Path $OutputDir -ChildPath ( (Get-ChildItem $yamlFile).BaseName + '.' + $_)
+        Write-Verbose "Applying transform $transformFile , output to $filename ..."
+        [void] (Transform-XML -XMLDocument $xmlDoc -transformFilename $transformFile | Out-File $filename -Force -Confirm:$false )
+        
+        if ($TeeToWriteHost) {
+          # TODO Write out the file content to Write-Host.  Useful if the caller is trapping Stdout
+        }
+  
+        Write-Output $filename
+      }
+    }
+    catch
+    {
+      Write-Verbose ("ERROR " + $_.ToString())
+      Throw $_
+      return ;
     }
   }
   
