@@ -1,6 +1,7 @@
 @ECHO OFF
 
-REM This assumes CPACK, from chocolatey, is in the same directory as this script or in the path
+REM This assumes NUGET.EXE is in the same directory as this script or in the path
+REM If not download it from http://nuget.org/nuget.exe
 
 SETLOCAL
 
@@ -39,7 +40,7 @@ COPY "%THISDIR%\Package.nuspec" "%WORKING%\Package.nuspec"
 ECHO Getting the package version from various sources
 SET PKGVERSION=0.0.1
 IF NOT [%1] == [] SET PKGVERSION=%1
-IF NOT [%APPVEYOR_BUILD_VERSION%] == [] SET PKGVERSION=0.9.%APPVEYOR_BUILD_VERSION%
+IF NOT [%APPVEYOR_BUILD_VERSION%] == [] SET PKGVERSION=%APPVEYOR_BUILD_VERSION%
 ECHO Using package version %PKGVERSION%
 
 ECHO Munging files with version numbers
@@ -49,6 +50,6 @@ powershell "& { . '%THISDIR%\mungefile.ps1' -File '%TOOLS_MODULE%\POSHPuppetRepo
 IF NOT [%PKGVERSION%] == [] SET PKGVERSION=-Version "%PKGVERSION%"
 
 ECHO Run Nuget Pack
-CPACK "%WORKING%\Package.nuspec"
+"nuget.exe" pack "%WORKING%\Package.nuspec" -NonInteractive %PKGVERSION% -NoPackageAnalysis
 
 EXIT /B %ERRORLEVEL%
