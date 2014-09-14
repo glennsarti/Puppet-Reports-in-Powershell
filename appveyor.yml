@@ -21,7 +21,7 @@ build_script:
   - cmd: "build\\build.bat"
 
 artifacts:
-  - path: **/*.nupkg
+  - path: '**\*.nupkg' # find all NuGet packages recursively
   
 # to disable automatic tests
 test: off
