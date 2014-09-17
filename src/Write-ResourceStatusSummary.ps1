@@ -10,19 +10,15 @@ function Write-ResourceStatusSummary($objYaml, $xmlDoc) {
 
   $statuses = @{}
   $resourceMetrics = $objYaml.metrics['resources'].values
-  $noChange = 0
   $total = 0
   for($index = $resourceMetrics.GetLowerBound(0); $index -lt $resourceMetrics.GetUpperBound(0); $index = $index + 3) {
     
     if ($resourceMetrics[$index] -eq 'total')
     {
-      $noChange = $noChange + $resourceMetrics[$index + 2]
       $total = $resourceMetrics[$index + 2]
     } 
     else
     {
-      $noChange = $noChange - $resourceMetrics[$index + 2]
-
       $statusInfo = @{}
       $statusInfo['count'] = $resourceMetrics[$index + 2]
       $statusInfo['id'] = $resourceMetrics[$index]
@@ -30,10 +26,7 @@ function Write-ResourceStatusSummary($objYaml, $xmlDoc) {
     } 
   }
   $statusInfo = @{}
-  $statusInfo['count'] = $noChange
-  $statusInfo['id'] = 'nochange'
-  $statuses["No change"] = $statusInfo
-  
+    
   $summaryNode = $xmlDoc.createElement('resourcesummary')
   [void]($summaryNode.SetAttribute('total',$total))
   
