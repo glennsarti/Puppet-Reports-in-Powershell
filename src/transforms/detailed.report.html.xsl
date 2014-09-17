@@ -16,6 +16,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     .nochangestatus { background-color:green; }
     .failedstatus { background-color:red; }
     .failed_to_restartstatus { background-color:red; }
+
+    .failedresource { color:red; }
     
     #SummaryTable { border:2px solid #707070; }
     #SummaryTable tr td { padding:5px; margin:5px; text-align:center; border-bottom:1px solid #C0C0C0; }
@@ -61,19 +63,31 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   
   <table cellpadding='0' cellspacing='0' id='ResourceList'>
     <tr>
-      <td>Resource</td><td>Eval. Time</td><td>Properties Changed</td><td>Properties Out of Sync</td><td>Events</td><td>Skipped</td>
+      <td>Resource</td><td>Eval. Time</td><td>Properties Changed</td><td >Properties Out of Sync</td><td>Events</td><td>Skipped</td>
     </tr>
     <xsl:for-each select="report/resources/resource">
     <xsl:sort select="@name" data-type="text" order="ascending" />
     <tr>
+      <xsl:if test="events/event/status='failure'">
+        <xsl:attribute name="class">failedresource</xsl:attribute> 
+      </xsl:if>
       <td><xsl:value-of select="@name" /></td>
       <td><xsl:value-of select="evaluation_time" /></td>
       <td><xsl:value-of select="change_count" /></td>
       <td><xsl:value-of select="out_of_sync_count" /></td>
+
       <td>
-        <xsl:for-each select="events/events/name">
-        <xsl:value-of select="." /><br />
-        </xsl:for-each>
+      <xsl:for-each select="events/event">
+        <xsl:choose>
+        <xsl:when test="property">
+          <xsl:value-of select="property" /> has status <xsl:value-of select="status" />
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="message" />
+        </xsl:otherwise>
+        </xsl:choose>
+        <br />
+      </xsl:for-each>
       </td>
       <td><xsl:value-of select="skipped" /></td>
     </tr>    
