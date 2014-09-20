@@ -2,7 +2,8 @@ Thumbs.db
 Desktop.INI
 
 downloads/*
-examples/*
+
+examples/*.yaml
 
 src/poweryaml/*
 build/working/*
