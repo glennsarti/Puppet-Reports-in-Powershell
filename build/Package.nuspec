@@ -7,7 +7,7 @@
     <authors>Glenn Sarti</authors>
     <owners>Glenn Sarti</owners>
     <projectUrl>https://github.com/glennsarti/Puppet-Reports-in-Powershell</projectUrl>
-    <!-- <iconUrl></iconUrl> -->
+    <iconUrl>https://raw.githubusercontent.com/glennsarti/Puppet-Reports-in-Powershell/master/resources/poshpuppetreports.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Powershell scripts to convert Puppet YAML reports into different formats (HTML, TeamCity events), and includes a GUI to convert reports on the fly</description>
     <tags>posh powershell puppet</tags>
