@@ -6,4 +6,4 @@ SET THISDIR=%~dp0
 IF %THISDIR:~-1%==\ SET THISDIR=%THISDIR:~0,-1%
 
 ECHO Uninstalling...
-CUNINST poshpuppetreports
+CUNINST poshpuppetreports -debug
