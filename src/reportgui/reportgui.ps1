@@ -1,3 +1,4 @@
+param([string]$Report = '', [string]$Transform = '')
 # Setup script defaults
 $ErrorActionPreference = "Stop"
 $VerbosePreference = "Continue"
@@ -23,6 +24,39 @@ Add-Type -AssemblyName System.Windows.Forms
 Write-Verbose 'Loading the POSHPuppetReports module'
 Import-Module "$PSScriptRoot\..\POSHPuppetReports.psd1"
 
+# Check the command line
+$cmdLineError = ""
+$autoloadReport = ""
+$autoloadTransform = ""
+if ($Report -ne '') {
+  Write-Verbose "Report path was specified on the command line"
+  if (!(Test-Path -Path $Report)) {
+    Write-Verbose "Report does not exist"
+    $cmdLineError += "The specified report does not exist`n`r"
+  }
+  else
+  {
+    Write-Verbose "Report exists"
+    $autoloadReport = $Report
+  }  
+}
+if ($Transform -ne '') {
+  Write-Verbose "Transform name was specified on the command line"
+  $TransformFile = (Join-Path -Path $transformPath -ChildPath ($Transform + ".xsl"))
+  if (!(Test-Path -Path $TransformFile)) {
+    Write-Verbose "Transform does not exist"
+    $cmdLineError += "The specified transform does not exist`n`r"
+  }
+  else
+  {
+    Write-Verbose "Transform exists"
+    $autoloadTransform = $Transform
+  }  
+}
+if ($cmdLineError -ne '') {
+  [void] ([System.Windows.MessageBox]::Show($cmdLineError,'Error','Ok','Information'))
+}
+
 # Load other PS1 files
 Get-ChildItem -Path $global:ScriptDirectory | Where-Object { ($_.Name -imatch '\.ps1$') -and ($_.Name -ne 'reportgui.ps1') } | % {
   Write-Verbose "Importing $($_.Name)..."
@@ -41,6 +75,7 @@ $Global:wpfWindow = [Windows.Markup.XamlReader]::Load($reader)
 # Wire up the XAML
 Write-Verbose "Adding XAML event handlers..."
 (Get-WPFControl 'buttonBrowseReportPath').Add_Click({
+  # TODO Perhaps create a wizard to enter a server name and automatically create a UNC to the default puppet path? \\<server>\c$\ProgramData....
   $dialogWindow = New-Object System.Windows.Forms.FolderBrowserDialog -Property @{
     SelectedPath = (Get-WPFControl 'textReportPath').Text;
     ShowNewFolderButton = $false;
@@ -123,10 +158,31 @@ Get-ChildItem -Path $transformPath | % {
   $transfromName = ($_.Name) -replace '.xsl',''
   [void]( (Get-WPFControl 'comboReportList').Items.Add($transfromName) )
 }
-$readMe = $global:ScriptDirectory + '\reportgui.readme.html'
-if (Test-Path -Path $readMe) {
-  Write-Verbose "Displaying ReadMe..."
-  (Get-WPFControl 'reportBrowser').NavigateToString( ([IO.File]::ReadAllText($readMe) ) )
+
+# Show the readme or autoload a report if specified
+if ( ($autoloadReport -ne "") -and ($autoloadTransform -ne "") )
+{
+  Write-Verbose "Converting the report $($autoloadReport) with transform $($autoloadTransform) specified on the command line..."
+  Invoke-ConvertReport -YAMLFilename $autoloadReport -TransformFilename $autoloadTransform -TransformParentPath $transformPath
+  Write-Verbose "Conversion finished..."
+  
+  # Set the UI to specified report path and transform name
+  (Get-WPFControl 'textReportPath').Text = (Split-Path -Path $autoloadReport -Parent)  
+  $comboBox = (Get-WPFControl 'comboReportList')
+  for($index = 0; $index -lt $comboBox.Items.Count; $index++) {
+    if ($comboBox.Items[$index] -eq $autoloadTransform) {
+      $comboBox.SelectedIndex = $index
+      break
+    }
+  }  
+}
+else
+{
+  $readMe = $global:ScriptDirectory + '\reportgui.readme.html'
+  if (Test-Path -Path $readMe) {
+    Write-Verbose "Displaying ReadMe..."
+    (Get-WPFControl 'reportBrowser').NavigateToString( ([IO.File]::ReadAllText($readMe) ) )
+  }
 }
 
 # Show the GUI
