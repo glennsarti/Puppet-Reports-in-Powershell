@@ -4,8 +4,8 @@ function Get-WPFControl {
     [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
     [string]$ControlName
 
-    ,[Parameter(Mandatory=$false,ValueFromPipeline=$false)]
-    [System.Windows.Window]$Window = $Global:wpfWindow
+    ,[Parameter(Mandatory=$true,ValueFromPipeline=$false)]
+    [System.Windows.Window]$Window
   )  
   Process {
     Write-Output $Window.FindName($ControlName)
