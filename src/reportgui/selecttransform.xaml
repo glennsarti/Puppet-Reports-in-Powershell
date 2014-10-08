@@ -7,12 +7,9 @@
     <XmlDataProvider x:Key="TransformList" XPath="transforms" x:Name="xmlTransformList">
       <x:XData>
         <transforms xmlns="">
-          <transform transformname="detailed.html" typetext="HTML">detailed.html</transform>
-          <transform transformname="basic.html" typetext="HTML">basic.html</transform>
-          <transform transformname="soemthing.stdout" typetext="Text">soemthing.stdout</transform>
         </transforms>
       </x:XData>
-      <!-- <report name="report1" datemodified="dd mmm yyyy HH:mm:ss">C:\Report1.xml</report> -->
+      <!-- <transform transformname="detailed.html" typetext="HTML">detailed.html</transform> -->
     </XmlDataProvider>
   </Window.Resources>
   <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">

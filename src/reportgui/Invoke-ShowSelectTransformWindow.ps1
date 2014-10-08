@@ -15,6 +15,28 @@ Function Invoke-ShowSelectTransformWindow() {
     # Wire up the XAML
 
     # Populate XAML items
+    [xml]$xmlDoc = '<transforms xmlns=""></transforms>'
+    Get-ChildItem -Path $transformPath | Sort-Object ($_.Name) | % {
+      $transfromName = ($_.Name) -replace '.xsl',''
+      
+      $index = $transfromName.LastIndexOf('.')
+      if ($index -gt -1)
+      {
+        $typeText = $transfromName.SubString($index + 1, $transfromName.Length - $index - 1)
+        if ($typeText -eq 'html') { $typeText = 'HTML' }
+        if ($typeText -eq 'stdout') { $typeText = 'Text' }
+      }
+      else
+      {
+        $typeText = "Unknown"
+      }
+   	  $xmlNode = $xmlDoc.CreateElement('transform')
+   	  $xmlNode.SetAttribute('transformname',$transfromName)
+   	  $xmlNode.SetAttribute('typetext',$typeText)
+   	  $xmlNode.innerText = ($transfromName)
+   	  $xmlDoc.documentElement.AppendChild($xmlNode)
+    }
+    (Get-WPFControl 'xmlTransformList' -Window $thisWindow).Document = $xmlDoc
 
     # Show the GUI
     Write-Verbose "Showing the window..."
