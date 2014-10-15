@@ -13,9 +13,30 @@ Function Invoke-ShowSelectTransformWindow() {
     $thisWindow = [Windows.Markup.XamlReader]::Load($reader)
 
     # Wire up the XAML
+    (Get-WPFControl 'listTransforms' -Window $thisWindow).Add_MouseDoubleClick({
+      param($sender,$e)
+    
+      # Parse the control tree looking for the descendant ListViewItem
+    	$originalSource = [System.Windows.DependencyObject]$e.OriginalSource;
+      while ( ($originalSource -ne $null) -and ($originalSource.GetType().ToString() -ne 'System.Windows.Controls.ListViewItem') )  {
+      	$originalSource = [System.Windows.Media.VisualTreeHelper]::GetParent($originalSource)
+      }
+      if ($originalSource -eq $null) { return; }
+      
+      $thisWindow.DialogResult = "ok"
+    })
+    (Get-WPFControl 'buttonUseTransform' -Window $thisWindow).Add_Click({
+      $listView = (Get-WPFControl 'listTransforms' -Window $thisWindow)      
+      if ($listView.SelectedItem -eq $null) {
+        [void] ([System.Windows.MessageBox]::Show('Please select a transform from the list','Error','Ok','Information'))
+        return
+      }
+      
+      $thisWindow.DialogResult = "ok"      
+    })
 
     # Populate XAML items
-    [xml]$xmlDoc = '<transforms xmlns=""></transforms>'
+     [xml]$xmlDoc = '<transforms xmlns=""></transforms>'
     Get-ChildItem -Path $transformPath | Sort-Object ($_.Name) | % {
       $transfromName = ($_.Name) -replace '.xsl',''
       
@@ -35,17 +56,26 @@ Function Invoke-ShowSelectTransformWindow() {
    	  $xmlNode.SetAttribute('typetext',$typeText)
    	  $xmlNode.innerText = ($transfromName)
    	  $xmlDoc.documentElement.AppendChild($xmlNode)
-    }
+    } | Out-Null
     (Get-WPFControl 'xmlTransformList' -Window $thisWindow).Document = $xmlDoc
 
     # Show the GUI
     Write-Verbose "Showing the window..."
-    $transformName = ""
-    [void]($thisWindow.ShowDialog())    
+    [string]$selectedTransformName = ""    
+    [void]($thisWindow.ShowDialog())
+    if ($thisWindow.dialogResult) {
+      $listView = (Get-WPFControl 'listTransforms' -Window $thisWindow)    
+      $xmlElement = $listView.SelectedItem
+      if ($xmlElement -ne $null) {
+        $selectedTransformName = $xmlElement.transformName
+        Write-Verbose "Selected transform from the dialog is $selectedTransformName"
+      }
+    }
+    
     Write-Verbose "Cleanup..."
-    $thisWindow.Close()
+    [void] ($thisWindow.Close())
     $thisWindow = $null
     
-    Write-Output $transformName
+    Write-Output $selectedTransformName
   }
 }
