@@ -18,6 +18,26 @@ try {
     [void] (Remove-Item $shortcutPath -Recurse -Confirm:$false -Force -ErrorAction 'Stop')
   }
 
+  # Remove the file assocication and command for YAML files...
+  $fileExtRegKey = "HKEY_LOCAL_MACHINE\SOFTWARE\Classes\.yaml"
+  # Create the file extension if it doesn't exist
+  if (Test-Path -Path "Registry::$($fileExtRegKey)") {
+    [string]$yamlFileClass = ""
+    try
+    {
+      $yamlFileClass = (Get-ItemProperty -Path "Registry::$($fileExtRegKey)").PSObject.Properties["(default)"].Value.ToString();
+    }
+    catch
+    {
+      $yamlFileClass = ""
+    }
+    if ($yamlFileClass -ne "") {
+      $fileAssocRegKey = "HKEY_LOCAL_MACHINE\SOFTWARE\Classes\$yamlFileClass"      
+      [void](Remove-Item -Path "Registry::$($fileAssocRegKey)\Shell\OpenWithPOSHPuppetReportViewer\Command" -ErrorAction "Ignore" -Confirm:$false -Force)
+      [void](Remove-Item -Path "Registry::$($fileAssocRegKey)\Shell\OpenWithPOSHPuppetReportViewer" -ErrorAction "Ignore"  -Confirm:$false -Force)
+    }
+  }
+
   Write-ChocolateySuccess "$packageName"
 } catch {
   Write-ChocolateyFailure "$packageName" "$($_.Exception.Message)"

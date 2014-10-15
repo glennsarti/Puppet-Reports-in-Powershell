@@ -24,6 +24,53 @@ try {
   $Shortcut.TargetPath = $targetPath
   $Shortcut.Arguments = "`"& { . '$($installDir)\reportgui\reportgui.ps1'}`""
   $Shortcut.Save()
+  
+  
+  # Add in the file assocication and command for YAML files...
+  $fileExtRegKey = "HKEY_LOCAL_MACHINE\SOFTWARE\Classes\.yaml"
+
+  # Create the file extension if it doesn't exist
+  if (! (Test-Path -Path "Registry::$($fileExtRegKey)")) {
+    [void](New-Item -Path "Registry::$($fileExtRegKey)")
+  }
+  
+  # Create the file association to extension if it doesn't exist
+  [string]$yamlFileClass = ""
+  try
+  {
+    $yamlFileClass = (Get-ItemProperty -Path "Registry::$($fileExtRegKey)").PSObject.Properties["(default)"].Value.ToString();
+  }
+  catch
+  {
+    $yamlFileClass = ""
+  }
+  if ($yamlFileClass -eq "") {
+    $yamlFileClass = "YAMLFile"
+    [void](Set-Item -Path "Registry::$($fileExtRegKey)" -Value $yamlFileClass)
+  }
+  $fileAssocRegKey = "HKEY_LOCAL_MACHINE\SOFTWARE\Classes\$yamlFileClass"
+  
+  # Create the file association if it doesn't exist
+  if (! (Test-Path -Path "Registry::$($fileAssocRegKey)")) {  
+    [void](New-Item -Path "Registry::$($fileAssocRegKey)")
+  }
+  # Create the file association name
+  try
+  {
+    $ignoreThis = (Get-ItemProperty -Path "Registry::$($fileAssocRegKey)").PSObject.Properties["(default)"].Value.ToString();
+  }
+  catch
+  {
+    [void](Set-Item -Path "Registry::$($fileAssocRegKey)" -Value "YAML Ain't Markup Language File")
+  }
+  
+  # Now the basic YAML file stuff is associated, just splat in the Puppet Report Viewer bits...
+  [void](New-Item -Path "Registry::$($fileAssocRegKey)\Shell" -ErrorAction "Ignore")
+  [void](New-Item -Path "Registry::$($fileAssocRegKey)\Shell\OpenWithPOSHPuppetReportViewer" -ErrorAction "Ignore")
+  [void](Set-Item -Path "Registry::$($fileAssocRegKey)\Shell\OpenWithPOSHPuppetReportViewer" -Value "Open in Puppet Report Viewer"  -ErrorAction "Ignore" -Force -Confirm:$false)
+  [void](New-Item -Path "Registry::$($fileAssocRegKey)\Shell\OpenWithPOSHPuppetReportViewer\Command" -ErrorAction "Ignore")
+  [void](Set-Item -Path "Registry::$($fileAssocRegKey)\Shell\OpenWithPOSHPuppetReportViewer\Command" -ErrorAction "Ignore" -Force -Confirm:$false `
+         -Value "$($targetPath) `"& { . '$($installDir)\reportgui\reportgui.ps1' '%1'}`"" -Type 'ExpandString')
     
   Write-ChocolateySuccess "$packageName"
 } catch {
