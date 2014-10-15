@@ -9,6 +9,9 @@ Function Invoke-ConvertReport() {
 
     ,[Parameter(Mandatory=$true,ValueFromPipeline=$false)]
     [string]$TransformParentPath
+
+    ,[Parameter(Mandatory=$false,ValueFromPipeline=$false)]
+    [object]$WPFWindow = $null
   )  
   Process {
     $outputDir = ($Env:Temp)
@@ -19,7 +22,9 @@ Function Invoke-ConvertReport() {
     if ($TransformFilename.EndsWith('.stdout')) {
       $fileContent = "<html><body><pre>" + $fileContent + "</pre></body></html>"
     }
-    (Get-WPFControl 'reportBrowser').NavigateToString($fileContent)
+    if ($WPFWindow -ne $null) {
+      (Get-WPFControl 'reportBrowser' -Window $WPFWindow).NavigateToString($fileContent)
+    }
     Write-Verbose "Removing temporary file $resultContent ..."
     [void](Remove-Item -Path $resultContent -Force -Confirm:$false)
   }
