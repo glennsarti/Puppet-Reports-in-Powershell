@@ -63,9 +63,11 @@ Get-ChildItem -Path $global:ScriptDirectory | Where-Object { ($_.Name -imatch '\
   . ($_.Fullname)
 }
 
-if (($autoloadTransform -eq "") -and ($autoloadReport -ne "")) {
+if (($autoloadTransform -eq "") -and ($autoloadReport -ne "")) {  
   # Passed in only the report name.  Prompt for the transform name
+  Write-Verbose "Report name was passed in the command line but no transform.  Prompting for which transform to use..."
   $autoloadTransform = Invoke-ShowSelectTransformWindow
+  Write-Verbose "Selected transform is [$autoloadTransform]"
 }
 
 Invoke-ShowMainWindow -AutoloadTransform $autoloadTransform -AutoloadReport $autoloadReport
