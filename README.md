@@ -6,6 +6,9 @@ Puppet-Reports-in-Powershell
 
 Powershell scripts to convert Puppet reports into other formats e.g. HTML or Teamcity Unit Tests
 
+This is available for installation via [Chocolatey](https://chocolatey.org/packages/poshpuppetreports)
+
+
 What's it for?
 --------------
 The [Puppet report YAML Puppet Report Format](http://docs.puppetlabs.com/puppet/3/reference/format_report.html) can be very confusing to read when there are a large number of resources.

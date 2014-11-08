@@ -13,14 +13,24 @@
     <tags>posh powershell puppet</tags>
     <dependencies />
     <releaseNotes>Full list of changes are available on GitHub; https://github.com/glennsarti/Puppet-Reports-in-Powershell/commits/master 
-    
- ### BUG FIXES:
- * Fix - Incorrectly thought the resource status were mutually exclusive however a resource can be counted as both out-of-sync and changed.  Removed this logic for the moment until I can come up with a better definition of unchanged
- * Fix -  The events resource is special as it can come in as null, an array or hashtable. I changed the rendering based on the object type. So now there will always be one 'events' xml node with zero or more 'event' nodes as children. This makes the stylesheet much easier to write and makes more sense in the long run.
+
+## Version 0.9.53
+### BUG FIXES:
+* Minor - Refactored code so that each function is in its own file.
+
+### IMPROVEMENTS:
+* Added context menu to open YAML files in the puppet report viewer.
+* If you call the ReportGUI with only a puppet report, the user is prompted to select a transform to use.
+* Added the ability to pass command line parameters to ReportGUI.CMD.
+
+## Version 0.9.51    
+### BUG FIXES:
+* Fix - Incorrectly thought the resource status were mutually exclusive however a resource can be counted as both out-of-sync and changed.  Removed this logic for the moment until I can come up with a better definition of unchanged
+* Fix -  The events resource is special as it can come in as null, an array or hashtable. I changed the rendering based on the object type. So now there will always be one 'events' xml node with zero or more 'event' nodes as children. This makes the stylesheet much easier to write and makes more sense in the long run.
  
- ### IMPROVEMENTS:
- *  Added better event output to the stylesheet. Failed resources are now coloured red.
- *  Added creating a shortcut called "Puppet Report GUI" to the 'Start Menu'. This functionality only works in .Net Framework 4.0 or above for the moment.
+### IMPROVEMENTS:
+*  Added better event output to the stylesheet. Failed resources are now coloured red.
+*  Added creating a shortcut called "Puppet Report GUI" to the 'Start Menu'. This functionality only works in .Net Framework 4.0 or above for the moment.
     </releaseNotes>
   </metadata>
   <files>
