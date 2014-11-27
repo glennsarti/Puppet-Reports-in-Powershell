@@ -24,6 +24,17 @@ ECHO Creating directory structure
 MKDIR "%TOOLS%"
 MKDIR "%TOOLS_MODULE%"
 
+ECHO Checking poweryaml
+IF NOT EXIST "%SRC%\poweryaml\PowerYaml.psm1" (
+  ECHO Installing poweryaml
+
+  CALL "%THISDIR%\..\InstallPowerYamlGithub.cmd"
+)
+IF NOT EXIST "%SRC%\poweryaml\PowerYaml.psm1" (
+  ECHO Missing poweryaml.  Throwing an error
+  EXIT /B 255
+)
+
 ECHO Copy source ready for packing...
 XCOPY "%SRC%" "%TOOLS_MODULE%" /s /e /v /c /i /f /y
 
