@@ -14,6 +14,10 @@
     <dependencies />
     <releaseNotes>Full list of changes are available on GitHub; https://github.com/glennsarti/Puppet-Reports-in-Powershell/commits/master 
 
+## Version 0.9.55
+### BUG FIXES:
+* Major - The PowerYAML library was not being copied during the build process so this project would fail to run.  Changed build batch file to copy PowerYAML if it doesn't already exist
+
 ## Version 0.9.53
 ### BUG FIXES:
 * Minor - Refactored code so that each function is in its own file.
